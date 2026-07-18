@@ -1,6 +1,7 @@
 #pragma once
 #include <WiFi.h>
 #include <AsyncTCP.h>
+#include <functional>
 
 namespace sentinel {
 class InternetMonitor {
@@ -9,7 +10,10 @@ class InternetMonitor {
   void update(uint32_t nowMs);
   bool available() const { return internetAvailable_; }
   bool takeStatusChanged();
+  using DateCallback = std::function<void(const String&)>;
+  void setDateCallback(DateCallback cb);
  private:
+ DateCallback dateCallback_;
   static void onConnect(void* arg, AsyncClient* client);
   static void onData(void* arg, AsyncClient* client, void* data, size_t len);
   static void onDisconnect(void* arg, AsyncClient* client);

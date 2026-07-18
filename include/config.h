@@ -13,15 +13,18 @@ constexpr char WIFI_PASSWORD[] = "CHANGE_ME";
 
 // Public HTTP endpoint used only to verify internet reachability. It bypasses
 // DNS deliberately, so a successful result proves routing beyond the LAN.
-const IPAddress INTERNET_TEST_IP(1, 1, 1, 1);
-constexpr char INTERNET_TEST_HOST[] = "one.one.one.one";
+  
+constexpr char INTERNET_TEST_HOST[] = "www.google.com";
 constexpr uint16_t INTERNET_TEST_PORT = 80;
 
 namespace pin {
 constexpr uint8_t STATUS_LED = 4;
 constexpr uint8_t WIFI_LED = 5;
-constexpr uint8_t I2C_SDA = 8;
-constexpr uint8_t I2C_SCL = 9;
+constexpr uint8_t TRAFFIC_RED = 25;
+constexpr uint8_t TRAFFIC_YELLOW = 26;
+constexpr uint8_t TRAFFIC_GREEN = 27;
+constexpr uint8_t I2C_SDA = 21;
+constexpr uint8_t I2C_SCL = 22;
 constexpr uint8_t SD_CS = 10;
 constexpr uint8_t SD_MOSI = 11;
 constexpr uint8_t SD_SCK = 12;
