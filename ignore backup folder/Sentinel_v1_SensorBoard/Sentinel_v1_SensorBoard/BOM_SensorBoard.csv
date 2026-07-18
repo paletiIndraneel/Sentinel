@@ -1,0 +1,17 @@
+Reference,Value,Footprint,Sheet
+C1,100nF LPF,Capacitor_SMD:C_0603_1608Metric,AC_Sensor_Board
+C2,100nF LPF,Capacitor_SMD:C_0603_1608Metric,AC_Sensor_Board
+C3,100nF LPF,Capacitor_SMD:C_0603_1608Metric,AC_Sensor_Board
+C4,10uF SNS_5V Decouple,Capacitor_SMD:C_0603_1608Metric,AC_Sensor_Board
+J1,J_TO_CONTROLLER,Connector_JST:JST_XH_B5B-XH-A_1x05_P2.50mm_Vertical,AC_Sensor_Board
+R1,1k Protection R,Resistor_SMD:R_0603_1608Metric,AC_Sensor_Board
+R2,1k Protection R,Resistor_SMD:R_0603_1608Metric,AC_Sensor_Board
+R3,1k Protection R,Resistor_SMD:R_0603_1608Metric,AC_Sensor_Board
+TB1,MAINS R/Y/B/N,TerminalBlock:TerminalBlock_bornier-4_P5.08mm,AC_Sensor_Board
+TP1,TP_OUT_R,TestPoint:TestPoint_Pad_1.5x1.5mm,AC_Sensor_Board
+TP2,TP_OUT_Y,TestPoint:TestPoint_Pad_1.5x1.5mm,AC_Sensor_Board
+TP3,TP_OUT_B,TestPoint:TestPoint_Pad_1.5x1.5mm,AC_Sensor_Board
+TP4,TP_SNS_GND,TestPoint:TestPoint_Pad_1.5x1.5mm,AC_Sensor_Board
+U1,ZMPT101B Phase-R,Sentinel:ZMPT101B_Module,AC_Sensor_Board
+U2,ZMPT101B Phase-Y,Sentinel:ZMPT101B_Module,AC_Sensor_Board
+U3,ZMPT101B Phase-B,Sentinel:ZMPT101B_Module,AC_Sensor_Board
