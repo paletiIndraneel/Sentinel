@@ -3,11 +3,19 @@
 #include <Arduino.h>
 #include "NotificationQueue.h"
 
-namespace sentinel {
+namespace sentinel
+{
 
 class TimeManager;
+}
 
-class NotificationManager {
+class TelegramBot;
+
+namespace sentinel
+{
+
+class NotificationManager
+{
 public:
     void begin(TimeManager* timeManager);
 
@@ -17,11 +25,14 @@ public:
     void error(const String& message);
     void critical(const String& message);
 
-private:
-    void log(NotificationLevel level, const String& message);
-    NotificationQueue queue_;
+    void processQueue(TelegramBot& telegram,
+                      bool internetAvailable);
 
+private:
+    void log(NotificationLevel level,const String& message);
+    NotificationQueue queue_;
     TimeManager* timeManager_ = nullptr;
+    uint32_t lastSendAttemptMs_ = 0;
 };
 
 }

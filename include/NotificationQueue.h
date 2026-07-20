@@ -28,7 +28,8 @@ public:
     bool hasPending() const;
     const NotificationRecord& front() const;
     void dequeue();
-
+    size_t size() const;
+    void clear();
 
 private:
     std::deque<NotificationRecord> queue_;

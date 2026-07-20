@@ -122,6 +122,7 @@ void SentinelApp::update() {
 
   // Internet monitor
   internet_.update(now);
+  notification_.processQueue(telegram_,internet_.available());
   if (internet_.takeStatusChanged())
 {
     if (internet_.isInternetAvailable())

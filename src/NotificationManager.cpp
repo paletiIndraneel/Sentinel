@@ -1,5 +1,6 @@
 #include "NotificationManager.h"
 #include "TimeManager.h"
+#include "TelegramBot.h"
 
 namespace sentinel {
 
@@ -33,15 +34,68 @@ void NotificationManager::critical(const String& message)
     log(NotificationLevel::Critical, message);
 }
 
-void NotificationManager::log(NotificationLevel level,const String& message){
-    NotificationRecord record;
-record.timestamp = "";
-record.level = level;
-record.message = message;
-record.delivered = false;
+void NotificationManager::processQueue(TelegramBot& telegram,bool internetAvailable){
+    if (!internetAvailable)
+    {
+        return;
+    }
 
-queue_.enqueue(record);
+    if (!telegram.isReady())
+    {
+        return;
+    }
+
+    if (!queue_.hasPending())
+    {
+        return;
+    }
+
+    const uint32_t now = millis();
+
+    if (now - lastSendAttemptMs_ < 1000)
+    {
+        return;
+    }
+
+    lastSendAttemptMs_ = now;
+
+    const NotificationRecord& record = queue_.front();
+
+    if (telegram.sendMessage(record.message.c_str()))
+    {
+        Serial.printf("[Notification] Sent: %s\n", record.message.c_str());
+        queue_.dequeue();
+    }
+    else
+    {
+        Serial.printf("[Notification] Send failed, will retry.\n");
+    }
+}
+
+
+void NotificationManager::log(NotificationLevel level,const String& message)
+{
+    // Get timestamp
+    String timestamp = "----";
+
+    if (timeManager_ && timeManager_->isTimeValid())
+    {
+        timestamp = timeManager_->getTimestamp();
+    }
+
+    // Create notification
+    NotificationRecord record;
+    record.timestamp = timestamp;
+    record.level = level;
+    record.message = message;
+    record.delivered = false;
+
+    // Store notification
+    queue_.enqueue(record);
+
+    // Convert level to text
     String levelText;
+
     switch (level)
     {
         case NotificationLevel::Info:
@@ -64,12 +118,12 @@ queue_.enqueue(record);
             levelText = "CRITICAL";
             break;
     }
-    String timestamp = "----";
-    if (timeManager_ && timeManager_->isTimeValid())
-    {
-        timestamp = timeManager_->getTimestamp();
-    }
-    Serial.printf("%s %-9s %s\n",timestamp.c_str(),levelText.c_str(),message.c_str());
+
+    // Serial log
+    Serial.printf("%s %-9s %s\n",
+                  timestamp.c_str(),
+                  levelText.c_str(),
+                  message.c_str());
 }
 
-}
+} // namespace sentinel
