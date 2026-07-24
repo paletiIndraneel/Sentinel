@@ -2,6 +2,17 @@
 #include "config.h"
 #include <cstring>
 
+
+String getSignalStrength(int rssi)
+{
+    if (rssi >= -50) return "Excellent";
+    if (rssi >= -60) return "Strong";
+    if (rssi >= -70) return "Good";
+    if (rssi >= -80) return "Fair";
+    if (rssi >= -90) return "Weak";
+    return "Critical";
+}
+
 namespace sentinel {
 
 void InternetMonitor::begin() {
@@ -33,18 +44,15 @@ void InternetMonitor::update(uint32_t nowMs) {
             connectStartedMs_ = nowMs;
             lastWifiAttemptMs_ = nowMs;
         }
-
         if (connecting_ &&nowMs - connectStartedMs_ >= config::WIFI_CONNECT_TIMEOUT_MS) {
             Serial.println("[Wi-Fi] Connection timeout.");
             WiFi.disconnect();
             connecting_ = false;
         }
-
         if (probeRunning_) {
             client_.close();
             probeRunning_ = false;
         }
-
         if (hadResult_) {
             setInternetAvailable(false);
         }
@@ -52,9 +60,9 @@ void InternetMonitor::update(uint32_t nowMs) {
     }
 
     if (connecting_) {
-        // Serial.println("[Wi-Fi] Connected.");
-        connecting_ = false;
-    }
+    connecting_ = false;
+    printConnectionInfo();
+}
 
     if (!probeRunning_ &&
         nowMs - lastProbeMs_ >= config::INTERNET_TEST_INTERVAL_MS) {
@@ -154,5 +162,35 @@ void InternetMonitor::setDateCallback(DateCallback cb) {
 }
 bool InternetMonitor::isInternetAvailable() const {
     return internetAvailable_;
+}
+void InternetMonitor::printConnectionInfo() const
+{
+    Serial.println();
+    Serial.println("========== Wi-Fi Connected ==========");
+    Serial.printf("SSID    : %s\n", WiFi.SSID().c_str());
+    Serial.printf("IP      : %s\n", WiFi.localIP().toString().c_str());
+    Serial.printf("Gateway : %s\n", WiFi.gatewayIP().toString().c_str());
+    Serial.printf("DNS     : %s\n", WiFi.dnsIP().toString().c_str());
+    Serial.printf("MAC     : %s\n", WiFi.macAddress().c_str());
+    Serial.printf("RSSI    : %d dBm\n", WiFi.RSSI());
+    Serial.printf("Channel : %d\n", WiFi.channel());
+    Serial.println("====================================");
+    Serial.println();
+}
+String InternetMonitor::getConnectionInfo() const
+{
+    String msg;
+
+    msg += "📶 Wi-Fi \n\n";
+    msg += "SSID     : " + WiFi.SSID() + "\n";
+    msg += "IP       : " + WiFi.localIP().toString() + "\n";
+    msg += "Gateway  : " + WiFi.gatewayIP().toString() + "\n";
+    msg += "DNS      : " + WiFi.dnsIP().toString() + "\n";
+    msg += "RSSI     : " + String(WiFi.RSSI()) + " dBm\n";
+    msg += "MAC      : " + WiFi.macAddress() + "\n";
+    msg += "Signal   : " + getSignalStrength(WiFi.RSSI()) + "\n";
+    msg += "Channel  : " + String(WiFi.channel());
+
+    return msg;
 }
 } // namespace sentinel

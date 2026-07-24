@@ -97,10 +97,6 @@ void SentinelApp::logEvents(const EventBatch& events) {
 }
 
 void SentinelApp::updateTrafficLights() {
-  // Red: No Wi-Fi
-  // Yellow: Wi-Fi connected but Internet unavailable
-  // Green: Internet available
-
   const int8_t state =
       internet_.available() ? 2 :
       (WiFi.status() == WL_CONNECTED ? 1 : 0);
@@ -111,10 +107,6 @@ void SentinelApp::updateTrafficLights() {
   digitalWrite(config::pin::TRAFFIC_RED, state == 0 ? HIGH : LOW);
   digitalWrite(config::pin::TRAFFIC_YELLOW, state == 1 ? HIGH : LOW);
   digitalWrite(config::pin::TRAFFIC_GREEN, state == 2 ? HIGH : LOW);
-
-  /*Serial.printf("[Traffic] %s (WiFi=%d Internet=%s)\n",state == 0 ? "RED" :state == 1 ? "YELLOW" :"GREEN",
-    WiFi.status(),
-    internet_.available() ? "ONLINE" : "OFFLINE");*/
 }
 
 void SentinelApp::update() {
@@ -127,19 +119,12 @@ void SentinelApp::update() {
 {
     if (internet_.isInternetAvailable())
     {
-        notification_.success("Internet available.");
-        if (!telegramBootMessageSent_)
-        {
-            if (telegram_.sendMessage("🚀 Sentinel boot complete."))
-            {
-              notification_.success("Telegram test message sent.");
-              telegramBootMessageSent_ = true;
-            }
-            else
-            {
-                notification_.warning("Failed to send Telegram test message.");
-            }
-        }
+      notification_.success("Internet available.");
+      if (!telegramBootMessageSent_){
+        notification_.info(internet_.getConnectionInfo());
+        notification_.success("🚀 Sentinel boot complete.");
+        telegramBootMessageSent_ = true;
+      }
     }
     else
     {

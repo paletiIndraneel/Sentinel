@@ -11,10 +11,12 @@ namespace sentinel {
     bool isInternetAvailable() const;
     void begin();
     void update(uint32_t nowMs);
+    void printConnectionInfo() const;
     bool available() const { return internetAvailable_; }
     bool takeStatusChanged();
     using DateCallback = std::function<void(const String&)>;
     void setDateCallback(DateCallback cb);
+    String getConnectionInfo() const;
   private:
     bool wifiConnected_ = false;
     bool wifiChanged_ = false;
